@@ -1,11 +1,14 @@
 const http = require('http');
-const url = require('url');
+const { URL } = require('url');
 
 const bodyParser = require('./helpers/bodyParser');
 const routes = require('./routes');
 
 const server = http.createServer((request, response) => {
-    const parseUrl = url.parse(request.url, true);
+    const parseUrl = new URL(`http://localhost:3000${request.url}`);
+
+    
+
     console.log(`Request method: ${request.method} | Endpoint: ${parseUrl.pathname}`);
 
     let { pathname } = parseUrl;
@@ -23,7 +26,7 @@ const server = http.createServer((request, response) => {
 ));
 
 if (route) {
-    request.query = parseUrl.query;
+    request.query = Object.fromEntries(parseUrl.searchParams);
     request.params = { id };
 
     response.send = (statusCode, body) => {
